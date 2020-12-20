@@ -129,6 +129,15 @@ foreach ($tables as $databaseName => $tableNames) {
 $dpr->pp("Finished backup.");
 $dpr->flush();
 
+if(date("d") <= 7){
+    // 1週目
+    $tarOutputPath = "/mnt/WHITEBOX/DataTomachi/backup/Server-Backup/$BACKUP_TYPE/$SERVER_NAME/$TODAY.tar.gz";
+    if(!file_exists(dirname($tarOutputPath))){
+        mkdir(dirname($tarOutputPath), 0777, true);
+    }
+    system("/usr/bin/tar cvf $tarOutputPath $BACKUP_DIR");
+}
+
 $dpr->pp("Delete old backups.");
 $files = scandir($BASE_DIR . "/backups/" . $SERVER_NAME);
 $files = array_filter($files, function ($file) {
