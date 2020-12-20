@@ -3,6 +3,8 @@ $options = getopt("s:t:");
 $SERVER_NAME = $options["s"];
 $BACKUP_TYPE = $options["t"];
 
+chdir(__DIR__);
+
 $TODAY = date("Y-m-d");
 $BASE_DIR = dirname(__DIR__);
 $LOG_DIR = $BASE_DIR . "/logs/" . $SERVER_NAME . "/";
