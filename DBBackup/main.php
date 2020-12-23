@@ -1,5 +1,5 @@
 <?php
-$options = getopt("s:t:");
+$options = getopt("s:");
 $SERVER_NAME = $options["s"];
 $BACKUP_TYPE = "DBBackup";
 
