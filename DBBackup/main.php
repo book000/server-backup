@@ -1,19 +1,19 @@
 <?php
 $options = getopt("s:t:");
 $SERVER_NAME = $options["s"];
-$BACKUP_TYPE = $options["t"];
+$BACKUP_TYPE = "DBBackup";
 
 chdir(__DIR__);
 
 $TODAY = date("Y-m-d");
 $BASE_DIR = dirname(__DIR__);
-$LOG_DIR = $BASE_DIR . "/logs/" . $SERVER_NAME . "/";
+$LOG_DIR = "$BASE_DIR/logs/$SERVER_NAME/$BACKUP_TYPE/";
 if (!file_exists($LOG_DIR)) {
     mkdir($LOG_DIR, 0777, true);
 }
 $LOG_PATH = $LOG_DIR . $TODAY . ".log";
 
-$BACKUP_DIR = $BASE_DIR . "/backups/" . $SERVER_NAME . "/" . $TODAY . "/";
+$BACKUP_DIR = "$BASE_DIR/backups/$SERVER_NAME/$BACKUP_TYPE/$TODAY/";
 if (!file_exists($BACKUP_DIR)) {
     mkdir($BACKUP_DIR, 0777, true);
 }
