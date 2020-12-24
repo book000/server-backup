@@ -55,7 +55,7 @@ $DATA_HOLD_SEC = $config[$BACKUP_TYPE]["DATA-HOLD-SEC"];
 
 // --- Get Databases and Tables ------------------------ //
 
-$cmd = "/bin/bash " . __DIR__ . "/rsync.sh -h $hostname -r $port -u $username -i $identity -p $passphrase -f $from -o $BACKUP_DIR";
+$cmd = "/bin/bash " . __DIR__ . "/rsync.sh -h '$hostname' -r '$port' -u '$username' -i '$identity' -p '$passphrase' -f '$from' -o '$BACKUP_DIR'";
 
 $start_time = microtime(true);
 system($cmd, $ret);
