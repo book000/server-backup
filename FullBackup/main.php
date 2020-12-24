@@ -76,7 +76,7 @@ if (date("d") <= 7) {
     if (!file_exists(dirname($tarOutputPath))) {
         mkdir(dirname($tarOutputPath), 0777, true);
     }
-    system("/usr/bin/tar cvf $tarOutputPath -C $BACKUP_DIR .");
+    system("/usr/bin/tar cvf $tarOutputPath -C $BACKUP_DIR/latest .");
 }
 
 $dpr->pp("Delete old backups.");
