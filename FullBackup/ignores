@@ -1,0 +1,11 @@
+/proc/
+/dev/
+/boot/
+/mnt/
+/media/
+/misc/
+/sys/
+/swpfile
+/TomachiMusicBot/
+.git
+node_modules

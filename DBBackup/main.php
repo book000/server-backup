@@ -137,14 +137,13 @@ if(date("d") <= 7){
     if(!file_exists(dirname($tarOutputPath))){
         mkdir(dirname($tarOutputPath), 0777, true);
     }
-    system("/usr/bin/tar cvf $tarOutputPath $BACKUP_DIR");
+    system("/usr/bin/tar cvf $tarOutputPath -C $BACKUP_DIR .");
 }
 
 $dpr->pp("Delete old backups.");
-$files = scandir($BASE_DIR . "/backups/" . $SERVER_NAME);
-$files = array_filter($files, function ($file) {
-    global $BASE_DIR, $SERVER_NAME;
-    return $file != "." && $file != ".." && is_dir($BASE_DIR . "/backups/" . $SERVER_NAME . "/" . $file);
+$files = scandir("$BASE_DIR/backups/$SERVER_NAME/$BACKUP_TYPE/");
+$files = array_filter($files, function ($file) use ($BASE_DIR, $SERVER_NAME, $BACKUP_TYPE) {
+    return $file != "." && $file != ".." && is_dir("$BASE_DIR/backups/$SERVER_NAME/$BACKUP_TYPE/$file");
 });
 foreach ($files as $file) {
     $unixtime = strtotime(mb_substr($file, 0, 10));
@@ -156,7 +155,7 @@ foreach ($files as $file) {
     }
 
     $dpr->pp("**dir**: `$file`");
-    $bool = deleteFolder($BASE_DIR . "/backups/" . $SERVER_NAME . "/" . $file);
+    $bool = deleteFolder("$BASE_DIR/backups/$SERVER_NAME/$BACKUP_TYPE/$file");
     $dpr->pp("**Deleted**: " . var_export($bool, true));
 }
 
