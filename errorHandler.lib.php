@@ -1,7 +1,32 @@
 <?php
 function registErrorHandler()
 {
-    // エラー時に例外をスローするようにコールバック関数を登録
+    register_shutdown_function(
+        function () {
+            global $dpr;
+            $e = error_get_last();
+            if ($e != null && (
+                $e["type"] == E_ERROR ||
+                        $e["type"] == E_PARSE ||
+                        $e["type"] == E_CORE_ERROR ||
+                        $e["type"] == E_COMPILE_ERROR ||
+                        $e["type"] == E_USER_ERROR
+            )) {
+                $type = GetDefineNameFromint($e["type"]);
+                $message = $e["message"];
+                $file = $e["file"];
+                $line = $e["line"];
+
+                $dpr->send(":warning:<@221991565567066112> An error has occurred!:warning:\nMessage: ```$message```\nType: `$type`\nFile: `$file`  on line `$line`");
+
+                $filename = basename($file);
+                $title = "[$filename:$line] $message";
+                $message = "**\$message**: `$message`\n**\$type**: `$type`\n**\$file**: `$file` on line `$line`";
+
+                processIssue($title, $message);
+            }
+        }
+    );
     set_error_handler(function ($errno, $errstr, $errfile, $errline) {
         global $dpr;
         $dpr->send(":warning:<@221991565567066112> An error has occurred!:warning:\nMessage: ```$errstr``` (`$errno`)\nFile: `$errfile`  on line `$errline`");
