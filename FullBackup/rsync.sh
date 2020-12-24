@@ -30,7 +30,7 @@ done
 LOGPATH="$SCRIPT_DIR/rsync.log"
 TODAY=$(date +%Y%m%d)
 
-SSHCMD="rsync -arhvz --progress --delete --backup --exclude-from=\"${SCRIPT_DIR}ignore\" -e 'ssh -p $PORT -i $IDENTITY' --rsync-path='sudo rsync' --backup-dir="${OUTPUT}$TODAY" $USERNAME@$HOSTNAME:$FROM ${OUTPUT}latest 2>&1 | tee $LOGPATH"
+SSHCMD="rsync -arhvz --progress --delete --backup --exclude-from='${SCRIPT_DIR}ignore' -e 'ssh -p $PORT -i $IDENTITY' --rsync-path='sudo rsync' --backup-dir="${OUTPUT}$TODAY" $USERNAME@$HOSTNAME:$FROM ${OUTPUT}latest 2>&1 | tee $LOGPATH"
 expect -c "
     set timeout 30
     spawn sh -c \"$SSHCMD\"
