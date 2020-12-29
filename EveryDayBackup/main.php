@@ -68,6 +68,9 @@ $finished_time_formatted = formatMicrotime($finished_time);
 $dpr->pp("**\$process_formattedtime**: $process_formattedtime");
 
 $dpr->pp("Finished backup.");
+$size = calcSize("{$BACKUP_DIR}latest/");
+$formattedSize = byte_format($size, 2);
+$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (size: `$formattedSize`)", "793611473162207262");
 $dpr->flush();
 
 $dpr->pp("Delete old backups.");

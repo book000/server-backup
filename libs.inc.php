@@ -69,3 +69,21 @@ function deleteFolder($dirpath)
     }
     return rmdir($dirpath);
 }
+
+
+function calcSize($dirpath)
+{
+    $files = scandir($dirpath);
+    $files = array_filter($files, function ($file) {
+        return $file != "." && $file != "..";
+    });
+    $size = 0;
+    foreach ($files as $file) {
+        if (is_file($dirpath . "/" . $file)) {
+            $size += filesize($dirpath . "/" . $file);
+        } else {
+            $size += calcSize($dirpath);
+        }
+    }
+    return $size;
+}

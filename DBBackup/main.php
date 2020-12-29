@@ -100,6 +100,8 @@ file_put_contents($CONF_PATH, $conf);
 $dpr->pp("Created.");
 $dpr->pp("Started backup.");
 
+$count = 0;
+$size = 0;
 foreach ($tables as $databaseName => $tableNames) {
     $dpr->pp("**Database**: `$databaseName`");
     foreach ($tableNames as $tableName) {
@@ -125,10 +127,14 @@ foreach ($tables as $databaseName => $tableNames) {
 
         $dpr->pp("**\$process_formattedtime**: $process_formattedtime");
         $dpr->pp("**Backup file size**: $formattedFilesize ($filesize)");
+        $count++;
+        $size += $filesize;
     }
 }
 
 $dpr->pp("Finished backup.");
+$formattedSize = byte_format($size, 2);
+$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (count: `$count` / size: `$formattedSize`)", "793611473162207262");
 $dpr->flush();
 
 if(date("d") <= 7){
@@ -137,7 +143,10 @@ if(date("d") <= 7){
     if(!file_exists(dirname($tarOutputPath))){
         mkdir(dirname($tarOutputPath), 0777, true);
     }
-    system("/usr/bin/tar cvf $tarOutputPath -C $BACKUP_DIR .");
+    system("/usr/bin/tar cvf $tarOutputPath -C $BACKUP_DIR .", $ret);
+    $size = filesize($tarOutputPath);
+    $formattedSize = byte_format($size, 2);
+    $dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** " . ($ret == 0 ? "Successful" : "**Failed**") . " moved to WhiteBox (size: `$formattedSize`)", "793611473162207262");
 }
 
 $dpr->pp("Delete old backups.");
