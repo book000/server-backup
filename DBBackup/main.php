@@ -110,7 +110,7 @@ foreach ($tables as $databaseName => $tableNames) {
         $start_time = microtime(true);
 
         $BACKUP_PATH = $BACKUP_DIR . "$databaseName-$tableName.sql.gz";
-        $cmd = "/usr/bin/mysqldump --single-transaction --defaults-file=$CONF_PATH $databaseName $tableName | gzip > $BACKUP_PATH";
+        $cmd = "/usr/bin/mysqldump --defaults-file=$CONF_PATH --single-transaction $databaseName $tableName | gzip > $BACKUP_PATH";
         $dpr->pp("**\$cmd** = `$cmd`");
         $cmd = "/usr/bin/bash -c \"$cmd\"";
         system($cmd, $ret);
