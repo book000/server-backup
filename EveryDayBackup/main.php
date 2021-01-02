@@ -64,13 +64,16 @@ $process_time = $finished_time - $start_time;
 $process_formattedtime = sprintf("%02d分%02d秒", $process_time / 60, $process_time % 60);
 $start_time_formatted = formatMicrotime($start_time);
 $finished_time_formatted = formatMicrotime($finished_time);
+$TODAY_DIR = date("Ymd");
 
 $dpr->pp("**\$process_formattedtime**: $process_formattedtime");
 
 $dpr->pp("Finished backup.");
-$size = calcSize("{$BACKUP_DIR}latest/");
-$formattedSize = byte_format($size, 2);
-$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (size: `$formattedSize`)", "793611473162207262");
+$latest_size = calcSize("{$BACKUP_DIR}latest/");
+$latest_formattedSize = byte_format($latest_size, 2);
+$today_size = calcSize("{$BACKUP_DIR}{$TODAY_DIR}/");
+$today_formattedSize = byte_format($today_size, 2);
+$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (size: `$formattedSize` / `$today_formattedSize`)", "793611473162207262");
 $dpr->flush();
 
 $dpr->pp("Delete old backups.");
