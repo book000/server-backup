@@ -53,9 +53,7 @@ $from = $config[$BACKUP_TYPE][$SERVER_NAME]["from"];
 
 $DATA_HOLD_SEC = $config[$BACKUP_TYPE]["DATA-HOLD-SEC"];
 
-// --- Get Databases and Tables ------------------------ //
-
-$cmd = "/bin/bash " . __DIR__ . "/rsync.sh -h '$hostname' -r '$port' -u '$username' -i '$identity' -p '$passphrase' -f '$from' -o '$BACKUP_DIR'";
+$cmd = "/bin/bash " . __DIR__ . "/rsync.sh -h '$hostname' -r '$port' -u '$username' -i '$identity' -p '$passphrase' -f '$from' -o '$BACKUP_DIR' 2>&1 | tee $LOG_PATH";
 
 $start_time = microtime(true);
 system($cmd, $ret);
@@ -73,7 +71,7 @@ $latest_size = calcSize("{$BACKUP_DIR}latest/");
 $latest_formattedSize = byte_format($latest_size, 2);
 $today_size = calcSize("{$BACKUP_DIR}{$TODAY_DIR}/");
 $today_formattedSize = byte_format($today_size, 2);
-$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (size: `$formattedSize` / `$today_formattedSize`)", "793611473162207262");
+$dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** successful. (size: `$latest_formattedSize` / `$today_formattedSize`)", "793611473162207262");
 $dpr->flush();
 
 $dpr->pp("Delete old backups.");
