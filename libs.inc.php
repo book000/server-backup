@@ -64,7 +64,7 @@ function deleteFolder($dirpath)
         if (is_file($dirpath . "/" . $file)) {
             unlink($dirpath . "/" . $file);
         } else {
-            deleteFolder($dirpath);
+            deleteFolder($dirpath . "/" . $file);
         }
     }
     return rmdir($dirpath);
