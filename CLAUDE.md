@@ -7,7 +7,7 @@ Standalone PHP CLI scripts that back up remote servers, run on a Linux backup ho
 - **DBBackup**: dumps every MySQL table with `mysqldump`, gzips each to `backups/<server>/DBBackup/<date>/`.
 - **EveryDayBackup** / **FullBackup**: pull files from a remote host with `rsync` over SSH (`rsync.sh` + `expect` for the key passphrase).
 
-Each job reports progress to Discord, deletes backups older than the retention window, and (in the first 7 days of each month) copies an archive to a mounted NAS. Uncaught PHP errors are reported to Discord and opened as GitHub issues.
+Each job reports progress to Discord and deletes backups older than the retention window. In the first 7 days of each month, DBBackup and FullBackup additionally copy an archive to a mounted NAS (EveryDayBackup does not). Uncaught PHP errors are reported to Discord and opened as GitHub issues.
 
 ## Running
 
