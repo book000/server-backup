@@ -61,7 +61,7 @@ function deleteFolder($dirpath)
         return $file != "." && $file != "..";
     });
     foreach ($files as $file) {
-        if (is_file($dirpath . "/" . $file)) {
+        if (is_link($dirpath . "/" . $file) || is_file($dirpath . "/" . $file)) {
             unlink($dirpath . "/" . $file);
         } else {
             deleteFolder($dirpath . "/" . $file);
