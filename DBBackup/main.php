@@ -102,6 +102,7 @@ $dpr->pp("Started backup.");
 
 $count = 0;
 $size = 0;
+$failedTables = [];
 foreach ($tables as $databaseName => $tableNames) {
     $dpr->pp("**Database**: `$databaseName`");
     foreach ($tableNames as $tableName) {
@@ -112,9 +113,17 @@ foreach ($tables as $databaseName => $tableNames) {
         $BACKUP_PATH = $BACKUP_DIR . "$databaseName-$tableName.sql.gz";
         $cmd = "/usr/bin/mysqldump --defaults-file=$CONF_PATH --single-transaction $databaseName $tableName | gzip > $BACKUP_PATH";
         $dpr->pp("**\$cmd** = `$cmd`");
-        $cmd = "/usr/bin/bash -c \"$cmd\"";
-        system($cmd, $ret);
+        system("/usr/bin/bash -o pipefail -c " . escapeshellarg($cmd), $ret);
         $dpr->pp("**\$ret** = `$ret`");
+
+        if ($ret !== 0) {
+            if (file_exists($BACKUP_PATH)) {
+                unlink($BACKUP_PATH);
+            }
+            $failedTables[] = "$databaseName.$tableName";
+            $dpr->pp("**Failed**: `$databaseName.$tableName` (exit code: `$ret`)");
+            continue;
+        }
 
         $filesize = file_exists($BACKUP_PATH) ? filesize($BACKUP_PATH) : "0";
         $formattedFilesize = byte_format($filesize, 2);
@@ -130,6 +139,13 @@ foreach ($tables as $databaseName => $tableNames) {
         $count++;
         $size += $filesize;
     }
+}
+
+if (count($failedTables) > 0) {
+    $dpr->pp("Backup failed.");
+    $dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** **Failed** (failed tables: `" . count($failedTables) . "`: " . implode(", ", $failedTables) . ")", "793611473162207262");
+    $dpr->flush();
+    exit(1);
 }
 
 $dpr->pp("Finished backup.");

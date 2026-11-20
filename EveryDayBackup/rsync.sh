@@ -33,11 +33,14 @@ TODAY=$(date +%Y%m%d)
 SSHCMD="rsync -arhvz --progress --delete --backup --exclude-from='${SCRIPT_DIR}/ignores' -e 'ssh -p $PORT -i $IDENTITY' --rsync-path='sudo rsync' --backup-dir="${OUTPUT}$TODAY" $USERNAME@$HOSTNAME:$FROM ${OUTPUT}latest 2>&1 | tee $LOGPATH"
 expect -c "
     set timeout 30
-    spawn sh -c \"$SSHCMD\"
+    spawn bash -o pipefail -c \"$SSHCMD\"
 
     expect ":"
 
     send \"$PASSPHRASE\n\"
 
-    interact
+    set timeout -1
+    expect eof
+    catch wait result
+    exit [expr {[lindex \$result 2] == 0 ? [lindex \$result 3] : 1}]
     "

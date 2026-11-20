@@ -53,7 +53,7 @@ $from = $config[$BACKUP_TYPE][$SERVER_NAME]["from"];
 
 $DATA_HOLD_SEC = $config[$BACKUP_TYPE]["DATA-HOLD-SEC"];
 
-$cmd = "/bin/bash " . __DIR__ . "/rsync.sh -h '$hostname' -r '$port' -u '$username' -i '$identity' -p '$passphrase' -f '$from' -o '$BACKUP_DIR' 2>&1 | tee $LOG_PATH";
+$cmd = "/bin/bash -o pipefail -c " . escapeshellarg("/bin/bash " . __DIR__ . "/rsync.sh -h '$hostname' -r '$port' -u '$username' -i '$identity' -p '$passphrase' -f '$from' -o '$BACKUP_DIR' 2>&1 | tee $LOG_PATH");
 
 $start_time = microtime(true);
 system($cmd, $ret);
@@ -65,6 +65,18 @@ $finished_time_formatted = formatMicrotime($finished_time);
 $TODAY_DIR = date("Ymd");
 
 $dpr->pp("**\$process_formattedtime**: $process_formattedtime");
+$dpr->pp("**\$ret** = `$ret`");
+
+// 稼働中サーバーでは転送中のファイル消失(終了コード 24)が日常的に起こるため成功扱いにする
+if ($ret === 24) {
+    $dpr->pp("rsync reported vanished source files (exit code 24); treated as success.");
+}
+if ($ret !== 0 && $ret !== 24) {
+    $dpr->pp("Backup failed.");
+    $dpr->send("[" . date("Y/m/d H:i:s") . "] **$SERVER_NAME: $BACKUP_TYPE** **Failed** (rsync exit code: `$ret`)", "793611473162207262");
+    $dpr->flush();
+    exit(1);
+}
 
 $dpr->pp("Finished backup.");
 $latest_size = calcSize("{$BACKUP_DIR}latest/");
